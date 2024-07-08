@@ -13,7 +13,7 @@ const Login = () => {
     let formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
-    handleLogin(formData);
+    handleLogin(formData, email);
   };
   return (
     <div>
