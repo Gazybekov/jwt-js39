@@ -6,11 +6,15 @@ export const useProduct = () => useContext(productContext);
 const ProductContextProvider = ({ children }) => {
   const INIT_STATE = {
     categories: [],
+    products: [],
+    pages: 10,
   };
   const reducer = (state = INIT_STATE, action) => {
     switch (action.type) {
       case "GET_CATEGORIES":
         return { ...state, categories: action.payload };
+      case "GET_PRODUCTS":
+        return { ...state, products: action.payload };
     }
   };
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
@@ -40,10 +44,34 @@ const ProductContextProvider = ({ children }) => {
       console.log(error);
     }
   };
+  //! get
+  const getProducts = async () => {
+    const { data } = await axios(
+      `${API}/products/${window.location.search}`,
+      getConfing()
+    );
+    dispatch({
+      type: "GET_PRODUCTS",
+      payload: data.results,
+    });
+  };
+  //! delete
+  const deleteProduct = async (id) => {
+    try {
+      await axios.delete(`${API}/products/${id}/`, getConfing());
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const values = {
     categories: state.categories,
     getCategories,
     addProduct,
+    getProducts,
+    products: state.products,
+    pages: state.pages,
+    deleteProduct,
   };
   return (
     <productContext.Provider value={values}>{children}</productContext.Provider>
